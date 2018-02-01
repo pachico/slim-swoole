@@ -15,24 +15,24 @@ class BridgeManager implements BridgeManagerInterface
     private $app;
 
     /**
-     * @var Bridge\RequestTransformer
+     * @var Bridge\RequestTransformerInterface
      */
     private $requestTransformer;
 
     /**
-     * @var Bridge\ResponseMerger
+     * @var Bridge\ResponseMergerInterface
      */
     private $responseMerger;
 
     /**
      * @param App $app
-     * @param Bridge\RequestTransformer $requestTransformer
-     * @param Bridge\ResponseMerger $responseMerger
+     * @param Bridge\RequestTransformerInterface $requestTransformer
+     * @param Bridge\ResponseMergerInterface $responseMerger
      */
     public function __construct(
         App $app,
-        Bridge\RequestTransformer $requestTransformer = null,
-        Bridge\ResponseMerger $responseMerger = null
+        Bridge\RequestTransformerInterface $requestTransformer = null,
+        Bridge\ResponseMergerInterface $responseMerger = null
     ) {
         $this->app = $app;
         $this->requestTransformer = $requestTransformer ?: new Bridge\RequestTransformer();

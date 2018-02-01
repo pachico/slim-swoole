@@ -14,8 +14,6 @@
         <ini name="error_reporting" value="E_ALL"/>
         <ini name="display_errors" value="On"/>
         <ini name="display_startup_errors" value="On"/>
-        <const name="DATABASE_FIXTURE_XML" value="tests/Fixture/MariaDB/acl.xml"/>
-        <const name="CONTRACT_PATH" value="vendor/oc/lib-ms-acl-contracts-v1/src/contract"/>
     </php>
 
     <testsuites>
@@ -23,6 +21,12 @@
             <directory>tests/Unit</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src/</directory>
+        </whitelist>
+    </filter>
 
     <logging>
         <log type="junit" target="build/logs/junit_unit.xml"/>

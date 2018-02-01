@@ -21,7 +21,6 @@ $app->any('/foo[/{myArg}]', function (Http\Request $request, Http\Response $resp
     ];
 
     return $response->withJson($data);
-
 })->add(function (Http\Request $request, Http\Response $response, callable $next) {
 
     $response->getBody()->write('BEFORE' . PHP_EOL);
