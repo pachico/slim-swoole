@@ -23,6 +23,9 @@ matrix:
       env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
 
 before_script:
+  - pecl install swoole
+  - echo "extension=swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - composer self-update
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
 
 script:
