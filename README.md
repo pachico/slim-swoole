@@ -1,8 +1,10 @@
 # slim-swoole
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pachico/slim-swoole/badges/quality-score.png?b=0.x-dev)](https://scrutinizer-ci.com/g/pachico/slim-swoole/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/pachico/slim-swoole/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/pachico/slim-swoole/?branch=master)
 [![Build Status](https://travis-ci.org/pachico/slim-swoole.svg?branch=master)](https://travis-ci.org/pachico/slim-swoole)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+
 
 This is a brige library to run [Slim framework](https://www.slimframework.com/) Slim framework applications using [Swoole engine](https://www.swoole.co.uk/).
 
