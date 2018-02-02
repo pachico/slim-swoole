@@ -120,4 +120,16 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->assertSame(1, $rewindSpy->getInvocationCount());
         $this->assertSame(1, $writeSpy->getInvocationCount());
     }
+
+    public function testStatusCodeGetsCopied()
+    {
+        // Arrange
+        $this->slimResponse->expects($this->once())->method('getStatusCode')->willReturn(400);
+        $this->swooleResponse->expects($setStatusSpy = $this->once())->method('status')->with(400);
+        // Act
+        $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+
+        // Assert
+        $this->assertSame(1, $setStatusSpy->getInvocationCount());
+    }
 }
