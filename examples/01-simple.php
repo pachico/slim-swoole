@@ -33,7 +33,7 @@ $app->any('/foo[/{myArg}]', function (Http\Request $request, Http\Response $resp
 });
 
 /**
- * We instanciate the BridgeManager
+ * We instanciate the BridgeManager (this library)
  */
 $bridgeManager = new BridgeManager($app);
 

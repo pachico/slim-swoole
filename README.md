@@ -1,27 +1,12 @@
 # slim-swoole
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pachico/slim-swoole/badges/quality-score.png?b=0.x-dev)](https://scrutinizer-ci.com/g/pachico/slim-swoole/?branch=0.x-dev)
+[![Build Status](https://travis-ci.org/pachico/slim-swoole.svg?branch=0.x-dev)](https://travis-ci.org/pachico/slim-swoole)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+This is a brige library to run [Slim framework](https://www.slimframework.com/) Slim framework applications using [Swoole engine](https://www.swoole.co.uk/).
 
-## Structure
-
-If any of the following are applicable to your project, then the directory structure should follow industry best practices by being named the following.
-
-```
-bin/
-config/
-src/
-tests/
-vendor/
-```
-
+It is still in development so any contribution and test will be more than welcome.
 
 ## Install
 
@@ -34,8 +19,72 @@ $ composer require pachico/slim-swoole
 ## Usage
 
 ``` php
-$skeleton = new Pachico\Slim-Swoole();
-echo $skeleton->echoPhrase('Hello, League!');
+<?php
+
+use Pachico\SlimSwoole\BridgeManager;
+use Slim\Http;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+/**
+ * This is how you would normally bootstrap your Slim application
+ * For the sake of demonstration, we also add a simple middleware
+ * to check that the entire app stack is being setup and executed
+ * properly.
+ */
+$app = new \Slim\App();
+$app->any('/foo[/{myArg}]', function (Http\Request $request, Http\Response $response, array $args) {
+    $data = [
+        'args' => $args,
+        'body' => (string) $request->getBody(),
+        'parsedBody' => (string) $request->getParsedBody(),
+        'params' => $request->getParams(),
+        'headers' => $request->getHeaders(),
+        'uploadedFiles' => $request->getUploadedFiles()
+    ];
+
+    return $response->withJson($data);
+})->add(function (Http\Request $request, Http\Response $response, callable $next) {
+
+    $response->getBody()->write('BEFORE' . PHP_EOL);
+    $response = $next($request, $response);
+    $response->getBody()->write(PHP_EOL . 'AFTER');
+
+    return $response;
+});
+
+/**
+ * We instanciate the BridgeManager (this library)
+ */
+$bridgeManager = new BridgeManager($app);
+
+/**
+ * We start the Swoole server
+ */
+$http = new swoole_http_server("0.0.0.0", 8081);
+
+/**
+ * We register the on "start" event
+ */
+$http->on("start", function (\swoole_http_server $server) {
+    echo sprintf('Swoole http server is started at http://%s:%s', $server->host, $server->port), PHP_EOL;
+});
+
+/**
+ * We register the on "request event, which will use the BridgeManager to transform request, process it
+ * as a Slim request and merge back the response
+ *
+ */
+$http->on(
+    "request",
+    function (swoole_http_request $swooleRequest, swoole_http_response $swooleResponse) use ($bridgeManager) {
+        $bridgeManager->process($swooleRequest, $swooleResponse)->end();
+    }
+);
+
+$http->start();
+
+
 ```
 
 ## Change log
@@ -65,17 +114,3 @@ If you discover any security related issues, please email pachicodev@gmail.com i
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/pachico/slim-swoole.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/pachico/slim-swoole/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/pachico/slim-swoole.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/pachico/slim-swoole.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/pachico/slim-swoole.svg?style=flat-square
-
-[link-packagist]: https://packagist.org/packages/pachico/slim-swoole
-[link-travis]: https://travis-ci.org/pachico/slim-swoole
-[link-scrutinizer]: https://scrutinizer-ci.com/g/pachico/slim-swoole/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/pachico/slim-swoole
-[link-downloads]: https://packagist.org/packages/pachico/slim-swoole
-[link-author]: https://github.com/pachico
-[link-contributors]: ../../contributors
