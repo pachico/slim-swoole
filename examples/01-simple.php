@@ -16,7 +16,7 @@ $app->any('/foo[/{myArg}]', function (Http\Request $request, Http\Response $resp
     $data = [
         'args' => $args,
         'body' => (string) $request->getBody(),
-        'parsedBody' => (string) $request->getParsedBody(),
+        'parsedBody' => $request->getParsedBody(),
         'params' => $request->getParams(),
         'headers' => $request->getHeaders(),
         'uploadedFiles' => $request->getUploadedFiles()
