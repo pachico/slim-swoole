@@ -1,24 +1,3 @@
-# slim-swoole
-
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pachico/slim-swoole/badges/quality-score.png?b=0.x-dev)](https://scrutinizer-ci.com/g/pachico/slim-swoole/?branch=master)
-[![Build Status](https://travis-ci.org/pachico/slim-swoole.svg?branch=master)](https://travis-ci.org/pachico/slim-swoole)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-
-This is a brige library to run [Slim framework](https://www.slimframework.com/) Slim framework applications using [Swoole engine](https://www.swoole.co.uk/).
-
-It is still in development so any contribution and test will be more than welcome.
-
-## Install
-
-Via Composer
-
-``` bash
-$ composer require pachico/slim-swoole
-```
-
-## Usage
-
-``` php
 <?php
 
 use Pachico\SlimSwoole\BridgeManager;
@@ -83,34 +62,3 @@ $http->on(
 );
 
 $http->start();
-
-
-```
-
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Testing
-
-``` bash
-$ composer test
-```
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) for details.
-
-## Security
-
-If you discover any security related issues, please email pachicodev@gmail.com instead of using the issue tracker.
-
-## Credits
-
-- [Mariano F.co Benítez Mulet][link-author]
-- [All Contributors][link-contributors]
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
