@@ -31,16 +31,18 @@ class ResponseMerger implements ResponseMergerInterface
     {
         $container = $this->app->getContainer();
 
-        if (isset($container->get('settings')['addContentLengthHeader']) &&
-            $container->get('settings')['addContentLengthHeader'] == true) {
+        $settings = $container->get('settings');
+        if (isset($settings['addContentLengthHeader']) && $settings['addContentLengthHeader'] == true) {
             $size = $slimResponse->getBody()->getSize();
             if ($size !== null) {
                 $swooleResponse->header('Content-Length', (string) $size);
             }
         }
 
-        foreach ($slimResponse->getHeaders() as $key => $headerArray) {
-            $swooleResponse->header($key, implode('; ', $headerArray));
+        if (!empty($slimResponse->getHeaders())) {
+            foreach ($slimResponse->getHeaders() as $key => $headerArray) {
+                $swooleResponse->header($key, implode('; ', $headerArray));
+            }
         }
 
         $swooleResponse->status($slimResponse->getStatusCode());
@@ -50,7 +52,7 @@ class ResponseMerger implements ResponseMergerInterface
                 $slimResponse->getBody()->rewind();
             }
 
-            $swooleResponse->write((string) $slimResponse->getBody());
+            $swooleResponse->write($slimResponse->getBody()->getContents());
         }
 
         return $swooleResponse;

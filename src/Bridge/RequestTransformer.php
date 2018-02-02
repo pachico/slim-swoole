@@ -90,8 +90,9 @@ class RequestTransformer implements RequestTransformerInterface
      */
     private function isMultiPartFormData(\swoole_http_request $request)
     {
+
         if (!isset($request->header['content-type'])
-            || !stripos($request->header['content-type'], 'multipart/form-data')) {
+            || false === stripos($request->header['content-type'], 'multipart/form-data')) {
             return false;
         }
 
@@ -107,7 +108,7 @@ class RequestTransformer implements RequestTransformerInterface
     {
 
         if (!isset($request->header['content-type'])
-            || !stripos($request->header['content-type'], 'application/x-www-form-urlencoded')) {
+            || false === stripos($request->header['content-type'], 'application/x-www-form-urlencoded')) {
             return false;
         }
 
@@ -123,7 +124,7 @@ class RequestTransformer implements RequestTransformerInterface
      */
     private function handleUploadedFiles(\swoole_http_request $request, Http\Request $slimRequest)
     {
-        if (!empty($request->files) || !is_array($request->files)) {
+        if (empty($request->files) || !is_array($request->files)) {
             return $slimRequest;
         }
 
@@ -143,17 +144,17 @@ class RequestTransformer implements RequestTransformerInterface
     }
 
     /**
-     * @param \swoole_http_request $request
+     * @param \swoole_http_request $swooleRequest
      * @param \Slim\Http\Request $slimRequest
      *
      * @return \Slim\Http\Request
      */
-    private function handlePostData(\swoole_http_request $request, Http\Request $slimRequest)
+    private function handlePostData(\swoole_http_request $swooleRequest, Http\Request $slimRequest)
     {
-        if (!empty($request->post) || !is_array($request->post)) {
+        if (empty($swooleRequest->post) || !is_array($swooleRequest->post)) {
             return $slimRequest;
         }
 
-        return $slimRequest->withParsedBody($request->post);
+        return $slimRequest->withParsedBody($swooleRequest->post);
     }
 }

@@ -22,6 +22,7 @@ matrix:
       env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
 
 before_script:
+  - pecl channel-update pecl.php.net
   - pecl install swoole
   - echo "extension=swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - composer self-update
