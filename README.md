@@ -109,8 +109,9 @@ If you discover any security related issues, please email pachicodev@gmail.com i
 
 ## Credits
 
-- [Mariano F.co Benítez Mulet][link-author]
-- [All Contributors][link-contributors]
+
+- [Mariano F.co Benítez Mulet](https://github.com/pachico)
+- [All Contributors](https://github.com/pachico/slim-swoole/graphs/contributors) 
 
 ## License
 
