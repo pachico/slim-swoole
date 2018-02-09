@@ -4,10 +4,12 @@ All notable changes to `slim-swoole` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## NEXT - YYYY-MM-DD
+## [Unreleased]
 
 ### Added
-- Nothing
+- Basic functionality
+- Basic example
+- Basic documentation
 
 ### Deprecated
 - Nothing

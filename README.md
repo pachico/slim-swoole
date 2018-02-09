@@ -8,7 +8,34 @@
 
 This is a brige library to run [Slim framework](https://www.slimframework.com/) Slim framework applications using [Swoole engine](https://www.swoole.co.uk/).
 
-It is still in development so any contribution and test will be more than welcome.
+## Overview
+
+The main purpose of this library is to easily run your already existing SlimPHP applications using Swoole Framework.
+It requires you to bootstrap your application only once when you start Swoole HTTP server and, thanks to its event driven design, it will process each request reusing your already started application for better performance.
+
+The execution sequence is as follows:
+      
+1. You bootstrap your SlimPHP application as you would normally do.
+2. You instantiate the `BrigeManager` passing to it your SlimPHP application.
+3. You start Swoole's HTTP server.
+4. You bind to the `on('request')` event handler the `BridgeManager` instance which will:
+    1. Transform the Swoole request to a SlimPHP based on server and request attributes.
+    2. Process your request through SlimPHP's application stack (including middlewares)
+    3. Merge SlimPHP Response to Swoole Response
+    4. End the request.
+    All this is done under the hood, so you will just need to call:
+    
+```php
+$bridgeManager->process($swooleRequest, $swooleResponse)->end();
+```
+(See usage paragraph for a complete example.)
+
+**Caution**: it is still in development so any contribution and test will be more than welcome.
+
+## Requirements
+
+* PHP-CLI >= 5.6
+* Swoole framework (this has been tested with version 1.10.1)
 
 ## Install
 
