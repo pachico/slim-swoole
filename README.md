@@ -34,7 +34,7 @@ $bridgeManager->process($swooleRequest, $swooleResponse)->end();
 
 ## Requirements
 
-* PHP-CLI >= 5.6
+* PHP-CLI >= 7.0 (Required by Swoole)
 * Swoole framework (this has been tested with version 1.10.1)
 
 ## Install

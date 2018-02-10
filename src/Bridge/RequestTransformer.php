@@ -6,7 +6,6 @@ use Slim\Http;
 
 class RequestTransformer implements RequestTransformerInterface
 {
-
     const DEFAULT_SCHEMA = 'http';
 
     /**
@@ -14,9 +13,9 @@ class RequestTransformer implements RequestTransformerInterface
      *
      * @return Http\Request
      *
-     * @todo Handle https requests
+     * @todo Handle HTTPS requests
      */
-    public function toSlim(\swoole_http_request $request)
+    public function toSlim(\swoole_http_request $request): Http\Request
     {
 
         $slimRequest = Http\Request::createFromEnvironment(
@@ -43,9 +42,7 @@ class RequestTransformer implements RequestTransformerInterface
             $slimRequest = $this->handleUploadedFiles($request, $slimRequest);
         }
 
-        $slimRequest = $this->copyBody($request, $slimRequest);
-
-        return $slimRequest;
+        return $this->copyBody($request, $slimRequest);
     }
 
     /**
@@ -54,7 +51,7 @@ class RequestTransformer implements RequestTransformerInterface
      *
      * @return Http\Request
      */
-    private function copyBody(\swoole_http_request $request, Http\Request $slimRequest)
+    private function copyBody(\swoole_http_request $request, Http\Request $slimRequest): Http\Request
     {
         if (empty($request->rawContent())) {
             return $slimRequest;
@@ -73,7 +70,7 @@ class RequestTransformer implements RequestTransformerInterface
      *
      * @return Http\Request
      */
-    private function copyHeaders(\swoole_http_request $request, Http\Request $slimRequest)
+    private function copyHeaders(\swoole_http_request $request, Http\Request $slimRequest): Http\Request
     {
 
         foreach ($request->header as $key => $val) {
@@ -88,7 +85,7 @@ class RequestTransformer implements RequestTransformerInterface
      *
      * @return boolean
      */
-    private function isMultiPartFormData(\swoole_http_request $request)
+    private function isMultiPartFormData(\swoole_http_request $request): bool
     {
 
         if (!isset($request->header['content-type'])
@@ -104,7 +101,7 @@ class RequestTransformer implements RequestTransformerInterface
      *
      * @return boolean
      */
-    private function isXWwwFormUrlEncoded(\swoole_http_request $request)
+    private function isXWwwFormUrlEncoded(\swoole_http_request $request): bool
     {
 
         if (!isset($request->header['content-type'])
@@ -118,11 +115,11 @@ class RequestTransformer implements RequestTransformerInterface
 
     /**
      * @param \swoole_http_request $request
-     * @param \Slim\Http\Request $slimRequest
+     * @param Http\Request $slimRequest
      *
-     * @return \Slim\Http\Request
+     * @return Http\Request
      */
-    private function handleUploadedFiles(\swoole_http_request $request, Http\Request $slimRequest)
+    private function handleUploadedFiles(\swoole_http_request $request, Http\Request $slimRequest): Http\Request
     {
         if (empty($request->files) || !is_array($request->files)) {
             return $slimRequest;
@@ -145,11 +142,11 @@ class RequestTransformer implements RequestTransformerInterface
 
     /**
      * @param \swoole_http_request $swooleRequest
-     * @param \Slim\Http\Request $slimRequest
+     * @param Http\Request $slimRequest
      *
-     * @return \Slim\Http\Request
+     * @return Http\Request
      */
-    private function handlePostData(\swoole_http_request $swooleRequest, Http\Request $slimRequest)
+    private function handlePostData(\swoole_http_request $swooleRequest, Http\Request $slimRequest): Http\Request
     {
         if (empty($swooleRequest->post) || !is_array($swooleRequest->post)) {
             return $slimRequest;
