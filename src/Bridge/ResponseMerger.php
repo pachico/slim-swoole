@@ -7,7 +7,6 @@ use Slim\App;
 
 class ResponseMerger implements ResponseMergerInterface
 {
-
     /**
      * @var App
      */
@@ -27,8 +26,10 @@ class ResponseMerger implements ResponseMergerInterface
      *
      * @return \swoole_http_response
      */
-    public function mergeToSwoole(Http\Response $slimResponse, \swoole_http_response $swooleResponse)
-    {
+    public function mergeToSwoole(
+        Http\Response $slimResponse,
+        \swoole_http_response $swooleResponse
+    ): \swoole_http_response {
         $container = $this->app->getContainer();
 
         $settings = $container->get('settings');

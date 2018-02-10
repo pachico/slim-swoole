@@ -8,7 +8,6 @@ use Slim\Http;
 
 class BridgeManager implements BridgeManagerInterface
 {
-
     /**
      * @var App
      */
@@ -45,12 +44,13 @@ class BridgeManager implements BridgeManagerInterface
      *
      * @return \swoole_http_response
      */
-    public function process(\swoole_http_request $swooleRequest, \swoole_http_response $swooleResponse)
-    {
+    public function process(
+        \swoole_http_request $swooleRequest,
+        \swoole_http_response $swooleResponse
+    ): \swoole_http_response {
         $slimRequest = $this->requestTransformer->toSlim($swooleRequest);
         $slimResponse = $this->app->process($slimRequest, new Http\Response());
-        $swooleResponse = $this->responseMerger->mergeToSwoole($slimResponse, $swooleResponse);
-
-        return $swooleResponse;
+        
+        return $this->responseMerger->mergeToSwoole($slimResponse, $swooleResponse);
     }
 }
