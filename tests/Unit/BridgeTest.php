@@ -39,13 +39,10 @@ class BridgeTest extends AbstractTestCase
     public function testProcessReturnsSwooleResponse()
     {
         // Arrange
-
         $sut = new BridgeManager($this->app, $this->requestTransformer, $this->responseMerger);
-
         // Act
         $output = $sut->process($this->swooleRequest, $this->swooleResponse);
         // Assert
-
         $this->assertInstanceOf('swoole_http_response', $output);
     }
 }
