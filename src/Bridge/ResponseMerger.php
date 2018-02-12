@@ -2,8 +2,9 @@
 
 namespace Pachico\SlimSwoole\Bridge;
 
-use Slim\Http;
 use Slim\App;
+use Slim\Http;
+use swoole_http_response;
 
 class ResponseMerger implements ResponseMergerInterface
 {
@@ -22,14 +23,14 @@ class ResponseMerger implements ResponseMergerInterface
 
     /**
      * @param Http\Response $slimResponse
-     * @param \swoole_http_response $swooleResponse
+     * @param swoole_http_response $swooleResponse
      *
-     * @return \swoole_http_response
+     * @return swoole_http_response
      */
     public function mergeToSwoole(
         Http\Response $slimResponse,
-        \swoole_http_response $swooleResponse
-    ): \swoole_http_response {
+        swoole_http_response $swooleResponse
+    ): swoole_http_response {
         $container = $this->app->getContainer();
 
         $settings = $container->get('settings');

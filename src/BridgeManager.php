@@ -5,6 +5,8 @@ namespace Pachico\SlimSwoole;
 use Pachico\SlimSwoole\Bridge;
 use Slim\App;
 use Slim\Http;
+use swoole_http_request;
+use swoole_http_response;
 
 class BridgeManager implements BridgeManagerInterface
 {
@@ -39,18 +41,18 @@ class BridgeManager implements BridgeManagerInterface
     }
 
     /**
-     * @param \swoole_http_request $swooleRequest
-     * @param \swoole_http_response $swooleResponse
+     * @param swoole_http_request $swooleRequest
+     * @param swoole_http_response $swooleResponse
      *
-     * @return \swoole_http_response
+     * @return swoole_http_response
      */
     public function process(
-        \swoole_http_request $swooleRequest,
-        \swoole_http_response $swooleResponse
-    ): \swoole_http_response {
+        swoole_http_request $swooleRequest,
+        swoole_http_response $swooleResponse
+    ): swoole_http_response {
         $slimRequest = $this->requestTransformer->toSlim($swooleRequest);
         $slimResponse = $this->app->process($slimRequest, new Http\Response());
-        
+
         return $this->responseMerger->mergeToSwoole($slimResponse, $swooleResponse);
     }
 }
