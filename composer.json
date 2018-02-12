@@ -1,7 +1,7 @@
 {
     "name": "pachico/slim-swoole",
     "type": "library",
-    "description": "Convenient library to run SlimPHP framework with Swoole",
+    "description": "Convenient library to run SlimPHP applications with Swoole",
     "keywords": [
         "pachico",
         "slim-swoole"
