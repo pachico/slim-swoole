@@ -17,11 +17,12 @@
         }
     ],
     "require": {
-        "php" : "^7.0"
+        "php": "^7.0"
     },
     "require-dev": {
-        "slim/slim": "^3.9",
+        "eaglewu/swoole-ide-helper": "dev-master",
         "phpunit/phpunit": "6.5.6",
+        "slim/slim": "^3.9",
         "squizlabs/php_codesniffer": "^3.2"
     },
     "autoload": {
@@ -46,5 +47,6 @@
     },
     "config": {
         "sort-packages": true
-    }
+    },
+    "minimum-stability": "stable"
 }
