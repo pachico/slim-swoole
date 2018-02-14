@@ -58,7 +58,7 @@ class RequestTransformer implements RequestTransformerInterface
             return $slimRequest;
         }
 
-        $body = new Http\Body(fopen('php://temp', 'w'));
+        $body = $slimRequest->getBody();
         $body->write($request->rawContent());
         $body->rewind();
 
