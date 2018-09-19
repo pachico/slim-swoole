@@ -4,6 +4,8 @@ namespace Pachico\SlimSwooleUnitTest\Bridge;
 
 use Pachico\SlimSwoole\Bridge;
 use Slim\Http;
+use Dflydev\FigCookies\Cookies;
+use Dflydev\FigCookies\FigRequestCookies;
 
 class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
 {
@@ -131,5 +133,22 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
         $this->assertSame($output->getUploadedFiles()['name2']->getClientMediaType(), 'type2');
         $this->assertSame($output->getUploadedFiles()['name2']->getError(), 0);
         $this->assertSame($output->getUploadedFiles()['name2']->getSize(), 88);
+    }
+
+    public function testCookiesAreCopiedProperly()
+    {
+        $this->swooleRequest->cookie = [
+            'some-cookie-1' => 'some-value-1',
+            'some-cookie-2' => 'some-value-2',
+            'some-cookie-3' => 'some-value-3',
+        ];
+
+        // Act
+        $output = $this->sut->toSlim($this->swooleRequest);
+
+        // Assert
+        $cookies = Cookies::fromRequest($output)->getAll();
+        $this->assertEquals(count($cookies), 3);
+        $this->assertEquals(FigRequestCookies::get($output, 'some-cookie-2')->getValue(), 'some-value-2');
     }
 }
