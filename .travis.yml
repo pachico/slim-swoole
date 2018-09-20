@@ -16,7 +16,8 @@ cache:
     - $HOME/.composer/cache
 
 before_script:
-  - pecl install swoole
+  - pecl channel-update pecl.php.net
+  - printf "\n" | pecl install swoole
   - echo "extension=swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - composer self-update
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
