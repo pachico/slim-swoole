@@ -4,6 +4,8 @@ namespace Pachico\SlimSwoole\Bridge;
 
 use Slim\Http;
 use swoole_http_request;
+use Dflydev\FigCookies\Cookie;
+use Dflydev\FigCookies\FigRequestCookies;
 
 class RequestTransformer implements RequestTransformerInterface
 {
@@ -43,7 +45,29 @@ class RequestTransformer implements RequestTransformerInterface
             $slimRequest = $this->handleUploadedFiles($request, $slimRequest);
         }
 
+        $slimRequest = $this->copyCookies($request, $slimRequest);
+
         return $this->copyBody($request, $slimRequest);
+    }
+
+    /**
+     * @param swoole_http_request $request
+     * @param Http\Request $slimRequest
+     *
+     * @return Http\Request
+     */
+    private function copyCookies(swoole_http_request $request, Http\Request $slimRequest): Http\Request
+    {
+        if (empty($request->cookie)) {
+            return $slimRequest;
+        }
+
+        foreach ($request->cookie as $name => $value) {
+            $cookie = Cookie::create($name, $value);
+            $slimRequest = FigRequestCookies::set($slimRequest, $cookie);
+        }
+
+        return $slimRequest;
     }
 
     /**
