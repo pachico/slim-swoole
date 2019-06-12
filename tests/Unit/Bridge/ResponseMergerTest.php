@@ -3,10 +3,16 @@
 namespace Pachico\SlimSwooleUnitTest\Bridge;
 
 use Pachico\SlimSwoole\Bridge;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http;
 
 class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
 {
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    private $psrResponse;
 
     /**
      * @var PHPUnit_Framework_MockObject_MockObject
@@ -46,6 +52,8 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->body = $this->getMockForAbstractClass(\Psr\Http\Message\StreamInterface::class);
         $this->slimResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
         $this->slimResponse->expects($this->any())->method('getBody')->willReturn($this->body);
+        $this->psrResponse = $this->getMockBuilder(ResponseInterface::class)->getMockForAbstractClass();
+        $this->psrResponse->expects($this->any())->method('getBody')->willReturn($this->body);
         $this->container = $this->getMockBuilder(\Slim\Container::class)->disableOriginalConstructor()->getMock();
         $this->app = $this->getMockBuilder(\Slim\App::class)->disableOriginalConstructor()->getMock();
         $this->app->expects($this->any())->method('getContainer')->willReturn($this->container);
@@ -58,6 +66,15 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         // Arrange
         // Act
         $output = $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        // Assert
+        $this->assertInstanceOf('\swoole_http_response', $output);
+    }
+
+    public function testMergeToSwooleReturnsPsrResponse()
+    {
+        // Arrange
+        // Act
+        $output = $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
         $this->assertInstanceOf('\swoole_http_response', $output);
     }
