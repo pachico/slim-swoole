@@ -3,7 +3,7 @@
 namespace Pachico\SlimSwoole\Bridge;
 
 use Slim\App;
-use Slim\Http;
+use Psr\Http\Message\ResponseInterface;
 use swoole_http_response;
 
 class ResponseMerger implements ResponseMergerInterface
@@ -22,39 +22,39 @@ class ResponseMerger implements ResponseMergerInterface
     }
 
     /**
-     * @param Http\Response $slimResponse
+     * @param Response $response
      * @param swoole_http_response $swooleResponse
      *
      * @return swoole_http_response
      */
     public function mergeToSwoole(
-        Http\Response $slimResponse,
+        ResponseInterface $response,
         swoole_http_response $swooleResponse
     ): swoole_http_response {
         $container = $this->app->getContainer();
 
         $settings = $container->get('settings');
         if (isset($settings['addContentLengthHeader']) && $settings['addContentLengthHeader'] == true) {
-            $size = $slimResponse->getBody()->getSize();
+            $size = $response->getBody()->getSize();
             if ($size !== null) {
                 $swooleResponse->header('Content-Length', (string) $size);
             }
         }
 
-        if (!empty($slimResponse->getHeaders())) {
-            foreach ($slimResponse->getHeaders() as $key => $headerArray) {
+        if (!empty($response->getHeaders())) {
+            foreach ($response->getHeaders() as $key => $headerArray) {
                 $swooleResponse->header($key, implode('; ', $headerArray));
             }
         }
 
-        $swooleResponse->status($slimResponse->getStatusCode());
+        $swooleResponse->status($response->getStatusCode());
 
-        if ($slimResponse->getBody()->getSize() > 0) {
-            if ($slimResponse->getBody()->isSeekable()) {
-                $slimResponse->getBody()->rewind();
+        if ($response->getBody()->getSize() > 0) {
+            if ($response->getBody()->isSeekable()) {
+                $response->getBody()->rewind();
             }
 
-            $swooleResponse->write($slimResponse->getBody()->getContents());
+            $swooleResponse->write($response->getBody()->getContents());
         }
 
         return $swooleResponse;

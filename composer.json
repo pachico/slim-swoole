@@ -18,7 +18,8 @@
     ],
     "require": {
         "php": "^7.0",
-        "dflydev/fig-cookies": "^1.0"
+        "dflydev/fig-cookies": "^1.0",
+        "psr/http-message": "^1.0"
     },
     "require-dev": {
         "eaglewu/swoole-ide-helper": "dev-master",
