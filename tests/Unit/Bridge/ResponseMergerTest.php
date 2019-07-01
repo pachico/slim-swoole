@@ -3,6 +3,7 @@
 namespace Pachico\SlimSwooleUnitTest\Bridge;
 
 use Pachico\SlimSwoole\Bridge;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http;
 
 class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
@@ -11,12 +12,12 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
     /**
      * @var PHPUnit_Framework_MockObject_MockObject
      */
-    private $swooleResponse;
+    private $psrResponse;
 
     /**
      * @var PHPUnit_Framework_MockObject_MockObject
      */
-    private $slimResponse;
+    private $swooleResponse;
 
     /**
      * @var PHPUnit_Framework_MockObject_MockObject
@@ -44,8 +45,8 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
 
         $this->swooleResponse = $this->getMockBuilder('\swoole_http_response')->disableOriginalConstructor()->getMock();
         $this->body = $this->getMockForAbstractClass(\Psr\Http\Message\StreamInterface::class);
-        $this->slimResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
-        $this->slimResponse->expects($this->any())->method('getBody')->willReturn($this->body);
+        $this->psrResponse = $this->getMockBuilder(ResponseInterface::class)->getMockForAbstractClass();
+        $this->psrResponse->expects($this->any())->method('getBody')->willReturn($this->body);
         $this->container = $this->getMockBuilder(\Slim\Container::class)->disableOriginalConstructor()->getMock();
         $this->app = $this->getMockBuilder(\Slim\App::class)->disableOriginalConstructor()->getMock();
         $this->app->expects($this->any())->method('getContainer')->willReturn($this->container);
@@ -53,11 +54,11 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->sut = new Bridge\ResponseMerger($this->app);
     }
 
-    public function testMergeToSwooleReturnsSlimResponse()
+    public function testMergeToSwooleReturnsPsrResponse()
     {
         // Arrange
         // Act
-        $output = $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        $output = $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
         $this->assertInstanceOf('\swoole_http_response', $output);
     }
@@ -71,7 +72,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->body->expects($this->any())->method('getSize')->willReturn(77);
         $this->swooleResponse->expects($headerSpy = $this->once())->method('header')->with('Content-Length', '77');
         // Act
-        $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
         $this->assertSame(1, $headerSpy->getInvocationCount());
     }
@@ -85,7 +86,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->body->expects($this->any())->method('getSize')->willReturn(77);
         $this->swooleResponse->expects($headerSpy = $this->never())->method('header')->with('Content-Length', '77');
         // Act
-        $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
         $this->assertSame(0, $headerSpy->getInvocationCount());
     }
@@ -93,13 +94,13 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
     public function testHeadersGetCopied()
     {
         // Arrange
-        $this->slimResponse->expects($this->any())->method('getHeaders')->willReturn([
+        $this->psrResponse->expects($this->any())->method('getHeaders')->willReturn([
             'foo' => ['bar'],
             'fiz' => ['bam']
         ]);
         $this->swooleResponse->expects($headerSpy = $this->exactly(2))->method('header');
         // Act
-        $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
         $this->assertSame(2, $headerSpy->getInvocationCount());
     }
@@ -114,7 +115,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->body->expects($this->once())->method('getContents')->willReturn('abc');
         $this->swooleResponse->expects($writeSpy = $this->once())->method('write')->with('abc');
         // Act
-        $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
 
         // Assert
         $this->assertSame(1, $rewindSpy->getInvocationCount());
@@ -124,10 +125,10 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
     public function testStatusCodeGetsCopied()
     {
         // Arrange
-        $this->slimResponse->expects($this->once())->method('getStatusCode')->willReturn(400);
+        $this->psrResponse->expects($this->once())->method('getStatusCode')->willReturn(400);
         $this->swooleResponse->expects($setStatusSpy = $this->once())->method('status')->with(400);
         // Act
-        $this->sut->mergeToSwoole($this->slimResponse, $this->swooleResponse);
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
 
         // Assert
         $this->assertSame(1, $setStatusSpy->getInvocationCount());
