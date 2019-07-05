@@ -5,6 +5,7 @@ namespace Pachico\SlimSwoole\Bridge;
 use Slim\App;
 use Psr\Http\Message\ResponseInterface;
 use swoole_http_response;
+use Dflydev\FigCookies\SetCookies;
 
 class ResponseMerger implements ResponseMergerInterface
 {
@@ -42,6 +43,10 @@ class ResponseMerger implements ResponseMergerInterface
         }
 
         if (!empty($response->getHeaders())) {
+            $this->setCookies($swooleResponse, $response);
+
+            $response = $response->withoutHeader('Set-Cookie');
+
             foreach ($response->getHeaders() as $key => $headerArray) {
                 $swooleResponse->header($key, implode('; ', $headerArray));
             }
@@ -58,5 +63,25 @@ class ResponseMerger implements ResponseMergerInterface
         }
 
         return $swooleResponse;
+    }
+
+    private function setCookies($swooleResponse, $response)
+    {
+        if (!$response->hasHeader('Set-Cookie')) {
+            return;
+        }
+
+        $setCookies = SetCookies::fromSetCookieStrings($response->getHeader('Set-Cookie'));
+        foreach ($setCookies->getAll() as $setCookie) {
+            $swooleResponse->cookie(
+                $setCookie->getName(),
+                $setCookie->getValue(),
+                $setCookie->getExpires(),
+                $setCookie->getPath(),
+                $setCookie->getDomain(),
+                $setCookie->getSecure(),
+                $setCookie->getHttpOnly()
+            );
+        }
     }
 }
