@@ -29,6 +29,7 @@ class RequestTransformer implements RequestTransformerInterface
                     'REQUEST_URI' => $request->server['request_uri'],
                     'QUERY_STRING' => isset($request->server['query_string']) ? $request->server['query_string'] : '',
                     'SERVER_PORT' => $request->server['server_port'],
+                    'SERVER_NAME' => $request->header['host'],
                     'REMOTE_ADDR' => $request->server['remote_addr'],
                     'REQUEST_TIME' => $request->server['request_time'],
                     'REQUEST_TIME_FLOAT' => $request->server['request_time_float']
@@ -97,7 +98,6 @@ class RequestTransformer implements RequestTransformerInterface
      */
     private function copyHeaders(swoole_http_request $request, Http\Request $slimRequest): Http\Request
     {
-
         foreach ($request->header as $key => $val) {
             $slimRequest = $slimRequest->withHeader($key, $val);
         }
