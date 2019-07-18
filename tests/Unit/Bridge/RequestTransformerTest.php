@@ -35,7 +35,9 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
             'request_time' => '1514764800',
             'request_time_float' => '1514764800.000',
         ];
-        $this->swooleRequest->header = [];
+        $this->swooleRequest->header = [
+            'host' => 'example.com',
+        ];
 
         $this->sut = new Bridge\RequestTransformer();
     }
@@ -63,10 +65,13 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
     public function testPostDataGetsCopiedIfExistsAndIsMultipartFormData()
     {
         // Arrange
-        $this->swooleRequest->header = [
-            'content-type' => 'multipart/form-data',
-            'foo' => 'bar'
-        ];
+        $this->swooleRequest->header = array_merge(
+            $this->swooleRequest->header,
+            [
+                'content-type' => 'multipart/form-data',
+                'foo' => 'bar'
+            ]
+        );
         $this->swooleRequest->post = [
             'foo' => 'bar'
         ];
@@ -81,9 +86,12 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
     public function testPostDataGetsCopiedIfExistsAndXWwwFormUrlEncoded()
     {
         // Arrange
-        $this->swooleRequest->header = [
-            'content-type' => 'application/x-www-form-urlencoded'
-        ];
+        $this->swooleRequest->header = array_merge(
+            $this->swooleRequest->header,
+            [
+                'content-type' => 'application/x-www-form-urlencoded'
+            ]
+        );
         $this->swooleRequest->post = [
             'foo' => 'bar'
         ];
@@ -98,7 +106,10 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
     public function testUploadedFilesAreCopiedProperty()
     {
         // Arrange
-        $this->swooleRequest->header = ['content-type' => 'multipart/form-data'];
+        $this->swooleRequest->header = array_merge(
+            $this->swooleRequest->header,
+            ['content-type' => 'multipart/form-data']
+        );
         $this->swooleRequest->files = [
             'name1' => [
                 'tmp_name' => 'tmp1',
@@ -150,5 +161,12 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
         $cookies = Cookies::fromRequest($output)->getAll();
         $this->assertEquals(count($cookies), 3);
         $this->assertEquals(FigRequestCookies::get($output, 'some-cookie-2')->getValue(), 'some-value-2');
+    }
+
+    public function testHostHeaderIsCopiedProperly()
+    {
+        // Act
+        $output = $this->sut->toSlim($this->swooleRequest);
+        $this->assertEquals($output->getUri()->getHost(), 'example.com');
     }
 }
