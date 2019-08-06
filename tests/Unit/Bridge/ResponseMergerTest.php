@@ -122,6 +122,20 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->assertSame(1, $writeSpy->getInvocationCount());
     }
 
+    public function testBodyContentGetsWrittenIfItIsAPipe()
+    {
+        // Arrange
+        $this->body->expects($this->once())->method('getSize')->willReturn(0);
+        $this->body->expects($this->any())->method('getMetadata')->willReturn(['mode' => 4480]); // named pipe (http://www.manpagez.com/man/2/stat/)
+        $this->body->expects($this->any())->method('detach')->willReturn(
+            popen('php -r "echo str_repeat(\'x\', 10000);"', 'r')
+        );
+        $this->swooleResponse->expects($writeSpy = $this->any())->method('write');
+
+        // Act
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
+    }
+
     public function testStatusCodeGetsCopied()
     {
         // Arrange
