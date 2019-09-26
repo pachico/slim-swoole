@@ -125,8 +125,9 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
     public function testStatusCodeGetsCopied()
     {
         // Arrange
-        $this->psrResponse->expects($this->once())->method('getStatusCode')->willReturn(400);
-        $this->swooleResponse->expects($setStatusSpy = $this->once())->method('status')->with(400);
+        $this->psrResponse->expects($this->once())->method('getStatusCode')->willReturn(235);
+        $this->psrResponse->expects($this->once())->method('getReasonPhrase')->willReturn('Unknown code');
+        $this->swooleResponse->expects($setStatusSpy = $this->once())->method('status')->with(235, 'Unknown code');
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
 
