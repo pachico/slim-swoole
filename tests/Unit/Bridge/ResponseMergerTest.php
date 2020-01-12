@@ -98,6 +98,8 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
             'foo' => ['bar'],
             'fiz' => ['bam']
         ]);
+        $this->psrResponse->method('withoutHeader')->willReturn($this->psrResponse); 
+
         $this->swooleResponse->expects($headerSpy = $this->exactly(2))->method('header');
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
@@ -105,6 +107,33 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->assertSame(2, $headerSpy->getInvocationCount());
     }
 
+    public function testCookiesShouldBeMergedWithCookieMethod()
+    {
+        $psrResponseWithoutCookies = clone $this->psrResponse;
+        $psrResponseWithoutCookies->method('getHeaders')->willReturn([]);
+        $this->psrResponse->method('withoutHeader')->willReturn($psrResponseWithoutCookies);
+        $expires = new \Datetime('+2 hours');
+        
+        $cookieArray = [
+            'Cookie1=Value1; Domain=some-domain; Path=/; Expires=' . $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly',
+        ];
+
+        // Arrange
+        $this->psrResponse->expects($this->any())->method('getHeaders')->willReturn([
+            'Set-Cookie' => $cookieArray
+        ]);
+        $this->psrResponse->method('getHeader')->willReturn($cookieArray);
+        $this->psrResponse->method('hasHeader')->willReturn(true);
+        $this->swooleResponse->expects($headerSpy = $this->exactly(0))->method('header');
+        $this->swooleResponse->expects($cookieSpy = $this->exactly(1))->method('cookie')
+            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true);
+        // Act
+        $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
+        // Assert
+        $this->assertSame(0, $headerSpy->getInvocationCount());
+        $this->assertSame(1, $cookieSpy->getInvocationCount());
+    }
+    
     public function testBodyContentGetsCopiedIfNotEmpty()
     {
         // Arrange
