@@ -47,7 +47,7 @@ class ResponseMerger implements ResponseMergerInterface
             }
         }
 
-        $swooleResponse->status($response->getStatusCode());
+        $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
 
         if ($response->getBody()->getSize() > 0) {
             if ($response->getBody()->isSeekable()) {
