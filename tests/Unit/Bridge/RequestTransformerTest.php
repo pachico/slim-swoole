@@ -20,7 +20,7 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
      */
     private $sut;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -35,7 +35,9 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
             'request_time' => '1514764800',
             'request_time_float' => '1514764800.000',
         ];
-        $this->swooleRequest->header = [];
+        $this->swooleRequest->header = [
+            'host' => 'nanotop:80'
+        ];
 
         $this->sut = new Bridge\RequestTransformer();
     }
@@ -65,7 +67,8 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
         // Arrange
         $this->swooleRequest->header = [
             'content-type' => 'multipart/form-data',
-            'foo' => 'bar'
+            'foo' => 'bar',
+            'host' => 'nanotop:80'
         ];
         $this->swooleRequest->post = [
             'foo' => 'bar'
@@ -75,14 +78,15 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
         // Assert
         $this->assertSame([
             'foo' => 'bar'
-            ], $output->getParsedBody());
+        ], $output->getParsedBody());
     }
 
     public function testPostDataGetsCopiedIfExistsAndXWwwFormUrlEncoded()
     {
         // Arrange
         $this->swooleRequest->header = [
-            'content-type' => 'application/x-www-form-urlencoded'
+            'content-type' => 'application/x-www-form-urlencoded',
+            'host' => 'nanotop:80'
         ];
         $this->swooleRequest->post = [
             'foo' => 'bar'
@@ -92,13 +96,16 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
         // Assert
         $this->assertSame([
             'foo' => 'bar'
-            ], $output->getParsedBody());
+        ], $output->getParsedBody());
     }
 
     public function testUploadedFilesAreCopiedProperty()
     {
         // Arrange
-        $this->swooleRequest->header = ['content-type' => 'multipart/form-data'];
+        $this->swooleRequest->header = [
+            'content-type' => 'multipart/form-data',
+            'host' => 'nanotop:80'
+        ];
         $this->swooleRequest->files = [
             'name1' => [
                 'tmp_name' => 'tmp1',

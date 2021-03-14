@@ -39,7 +39,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
      */
     private $sut;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -98,7 +98,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
             'foo' => ['bar'],
             'fiz' => ['bam']
         ]);
-        $this->psrResponse->method('withoutHeader')->willReturn($this->psrResponse); 
+        $this->psrResponse->method('withoutHeader')->willReturn($this->psrResponse);
 
         $this->swooleResponse->expects($headerSpy = $this->exactly(2))->method('header');
         // Act
@@ -115,7 +115,8 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $expires = new \Datetime('+2 hours');
         
         $cookieArray = [
-            'Cookie1=Value1; Domain=some-domain; Path=/; Expires=' . $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly',
+            'Cookie1=Value1; Domain=some-domain; Path=/; Expires=' .
+                $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly',
         ];
 
         // Arrange

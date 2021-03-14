@@ -14,7 +14,7 @@ class BridgeTest extends AbstractTestCase
     private $requestTransformer;
     private $responseMerger;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

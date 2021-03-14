@@ -20,19 +20,19 @@ class RequestTransformer implements RequestTransformerInterface
      */
     public function toSlim(swoole_http_request $request): Http\Request
     {
-
         $slimRequest = Http\Request::createFromEnvironment(
             new Http\Environment([
-                    'SERVER_PROTOCOL' => $request->server['server_protocol'],
-                    'REQUEST_METHOD' => $request->server['request_method'],
-                    'REQUEST_SCHEME' => static::DEFAULT_SCHEMA,
-                    'REQUEST_URI' => $request->server['request_uri'],
-                    'QUERY_STRING' => isset($request->server['query_string']) ? $request->server['query_string'] : '',
-                    'SERVER_PORT' => $request->server['server_port'],
-                    'REMOTE_ADDR' => $request->server['remote_addr'],
-                    'REQUEST_TIME' => $request->server['request_time'],
-                    'REQUEST_TIME_FLOAT' => $request->server['request_time_float']
-                    ])
+                'SERVER_PROTOCOL' => $request->server['server_protocol'],
+                'REQUEST_METHOD' => $request->server['request_method'],
+                'REQUEST_SCHEME' => static::DEFAULT_SCHEMA,
+                'REQUEST_URI' => $request->server['request_uri'],
+                'QUERY_STRING' => isset($request->server['query_string']) ? $request->server['query_string'] : '',
+                'SERVER_PORT' => $request->server['server_port'],
+                'REMOTE_ADDR' => $request->server['remote_addr'],
+                'REQUEST_TIME' => $request->server['request_time'],
+                'REQUEST_TIME_FLOAT' => $request->server['request_time_float'],
+                'HTTP_HOST' => isset($request->header['host']) ? $request->header['host'] : ''
+            ])
         );
 
         $slimRequest = $this->copyHeaders($request, $slimRequest);
@@ -114,7 +114,8 @@ class RequestTransformer implements RequestTransformerInterface
     {
 
         if (!isset($request->header['content-type'])
-            || false === stripos($request->header['content-type'], 'multipart/form-data')) {
+            || false === stripos($request->header['content-type'], 'multipart/form-data')
+        ) {
             return false;
         }
 
@@ -130,7 +131,8 @@ class RequestTransformer implements RequestTransformerInterface
     {
 
         if (!isset($request->header['content-type'])
-            || false === stripos($request->header['content-type'], 'application/x-www-form-urlencoded')) {
+            || false === stripos($request->header['content-type'], 'application/x-www-form-urlencoded')
+        ) {
             return false;
         }
 
