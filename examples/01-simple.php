@@ -13,22 +13,24 @@ require __DIR__ . '/../vendor/autoload.php';
  */
 $app = new \Slim\App();
 $app->any('/foo[/{myArg}]', function (Http\Request $request, Http\Response $response, array $args) {
+
     $data = [
         'args' => $args,
-        'body' => (string) $request->getBody(),
-        'parsedBody' => $request->getParsedBody(),
-        'params' => $request->getParams(),
-        'headers' => $request->getHeaders(),
-        'uploadedFiles' => $request->getUploadedFiles()
+        'request_uri' => $request->getUri(),
+        'request_body' => (string) $request->getBody(),
+        'request_parsed_body' => $request->getParsedBody(),
+        'request_params' => $request->getParams(),
+        'request_headers' => $request->getHeaders(),
+        'request_uploadedFiles' => $request->getUploadedFiles()
     ];
 
-    return $response->withJson($data);
+    return $response->withJson($data, 200, JSON_PRETTY_PRINT);
 })->add(function (Http\Request $request, Http\Response $response, callable $next) {
-
-    $response->getBody()->write('BEFORE' . PHP_EOL);
+    // No-OP middleware. Just for demonstration purposes
+    
+    // echo "before app stack\n";
     $response = $next($request, $response);
-    $response->getBody()->write(PHP_EOL . 'AFTER');
-
+    // echo "after app stack\n";
     return $response;
 });
 
