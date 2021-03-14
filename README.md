@@ -5,16 +5,15 @@
 [![Build Status](https://travis-ci.org/pachico/slim-swoole.svg?branch=master)](https://travis-ci.org/pachico/slim-swoole)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-
 This is a brige library to run [Slim framework](https://www.slimframework.com/) Slim framework applications using [Swoole engine](https://www.swoole.co.uk/).
 
 ## Overview
 
-The main purpose of this library is to easily run your already existing SlimPHP applications using Swoole Framework.
+The main purpose of this library is to easily run your already existing SlimPHP3 applications using Swoole Framework.
 It requires you to bootstrap your application only once when you start Swoole HTTP server and, thanks to its event driven design, it will process each request reusing your already started application for better performance.
 
 The execution sequence is as follows:
-      
+
 1. You bootstrap your SlimPHP application as you would normally do.
 2. You instantiate the `BrigeManager` passing to it your SlimPHP application.
 3. You start Swoole's HTTP server.
@@ -24,10 +23,11 @@ The execution sequence is as follows:
     3. Merge SlimPHP Response to Swoole Response
     4. End the request.
     All this is done under the hood, so you will just need to call:
-    
+
 ```php
 $bridgeManager->process($swooleRequest, $swooleResponse)->end();
 ```
+
 (See usage paragraph for a complete example.)
 
 **Caution**: it is still in development so any contribution and test will be more than welcome.
@@ -42,7 +42,7 @@ $bridgeManager->process($swooleRequest, $swooleResponse)->end();
 Via Composer
 
 ``` bash
-$ composer require pachico/slim-swoole
+composer require pachico/slim-swoole
 ```
 
 ## Usage
@@ -123,7 +123,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 ## Testing
 
 ``` bash
-$ composer test
+composer test
 ```
 
 ## Contributing
@@ -136,11 +136,9 @@ If you discover any security related issues, please email pachicodev@gmail.com i
 
 ## Credits
 
-
-- [Mariano F.co Benítez Mulet](https://github.com/pachico)
-- [All Contributors](https://github.com/pachico/slim-swoole/graphs/contributors) 
+* [Mariano F.co Benítez Mulet](https://github.com/pachico)
+* [All Contributors](https://github.com/pachico/slim-swoole/graphs/contributors)
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
