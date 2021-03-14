@@ -8,8 +8,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="true"
-         syntaxCheck="false">
+         stopOnFailure="true">
     <php>
         <ini name="error_reporting" value="E_ALL"/>
         <ini name="display_errors" value="On"/>
